@@ -51,6 +51,11 @@ function EditNameModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+const NAV = [
+  { href: "/", label: "Carte", icon: "🍹" },
+  { href: "/orders", label: "Mes commandes", icon: "🧾" },
+];
+
 function Header() {
   const { userName } = useUser();
   const pathname = usePathname();
@@ -59,27 +64,60 @@ function Header() {
   return (
     <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0f0a1f]/85 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="text-lg font-extrabold">
+        <Link href="/" className="min-w-0 truncate text-lg font-extrabold">
           🥂 {APP_NAME}
         </Link>
-        <div className="flex items-center gap-2">
-          <Link
-            href={pathname === "/orders" ? "/" : "/orders"}
-            className="rounded-full bg-white/10 px-3 py-2 text-sm font-semibold active:scale-95"
-          >
-            {pathname === "/orders" ? "Menu" : "Mes commandes"}
-          </Link>
-          <button
-            onClick={() => setEditing(true)}
-            aria-label="Modifier mon prénom"
-            className="rounded-full bg-white/10 px-3 py-2 text-sm font-semibold active:scale-95"
-          >
-            {userName} ⚙
-          </button>
-        </div>
+        <nav className="ml-auto hidden gap-2 sm:flex">
+          {NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`rounded-full px-4 py-2 text-sm font-semibold active:scale-95 ${
+                pathname === item.href ? "bg-amber-400 text-violet-950" : "bg-white/10"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <button
+          onClick={() => setEditing(true)}
+          aria-label="Modifier mon prénom"
+          className="flex min-w-0 max-w-[45%] shrink-0 items-center gap-1.5 rounded-full bg-white/10 py-2 pl-3 pr-3 text-sm font-semibold active:scale-95"
+        >
+          <span className="truncate">{userName}</span>
+          <span aria-hidden>✏️</span>
+        </button>
       </div>
       {editing && <EditNameModal onClose={() => setEditing(false)} />}
     </header>
+  );
+}
+
+function BottomNav() {
+  const pathname = usePathname();
+
+  return (
+    <nav
+      aria-label="Navigation"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-[#0f0a1f]/90 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
+    >
+      <div className="mx-auto grid max-w-3xl grid-cols-2 gap-2 p-2">
+        {NAV.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={pathname === item.href ? "page" : undefined}
+            className={`flex items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold active:scale-95 ${
+              pathname === item.href ? "bg-amber-400 text-violet-950" : "bg-white/10"
+            }`}
+          >
+            <span aria-hidden>{item.icon}</span>
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </nav>
   );
 }
 
@@ -87,7 +125,8 @@ export function UserShell({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider gate={<NameGate />}>
       <Header />
-      <main className="mx-auto max-w-3xl px-4 pb-16 pt-5">{children}</main>
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-5 sm:pb-16">{children}</main>
+      <BottomNav />
     </UserProvider>
   );
 }

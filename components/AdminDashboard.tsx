@@ -139,8 +139,11 @@ export function AdminDashboard() {
   return (
     <main className="mx-auto max-w-5xl px-4 pb-20 pt-6">
       <header className="mb-6 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-extrabold">🥂 {APP_NAME} · Administration</h1>
-        <button onClick={logout} className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold">
+        <h1 className="min-w-0 text-xl font-extrabold sm:text-2xl">
+          <span className="block truncate">🥂 {APP_NAME}</span>
+          <span className="block text-sm font-semibold text-violet-300/80">Administration</span>
+        </h1>
+        <button onClick={logout} className="shrink-0 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold">
           Déconnexion
         </button>
       </header>
@@ -157,7 +160,7 @@ export function AdminDashboard() {
         </p>
       )}
 
-      <div className="mb-6 flex flex-wrap gap-3">
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:flex">
         <button
           onClick={() => setDialog({ type: "form", draft: emptyDraft() })}
           disabled={categories.length === 0}
@@ -177,8 +180,8 @@ export function AdminDashboard() {
       {!loaded ? (
         <p className="py-16 text-center text-violet-200/70">Chargement...</p>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
-          <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <div className="flex min-w-0 flex-col gap-6">
             {categories.map((category) => {
               const items = drinks.filter((d) => d.categoryId === category.id);
               if (items.length === 0) return null;
@@ -210,7 +213,7 @@ export function AdminDashboard() {
             )}
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex min-w-0 flex-col gap-6">
             {stats && <AdminStats stats={stats} orders={orders} />}
             <AdminCategories
               categories={categories}

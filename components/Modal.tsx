@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   onClose: () => void;
@@ -9,6 +10,12 @@ type Props = {
 };
 
 export function Modal({ onClose, children, wide }: Props) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -22,7 +29,11 @@ export function Modal({ onClose, children, wide }: Props) {
     };
   }, [onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  // Rendered in <body> so that ancestors with backdrop-filter/transform
+  // (e.g. the sticky header) cannot become the containing block of "fixed".
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-3 backdrop-blur-sm sm:items-center"
       onClick={onClose}
@@ -38,6 +49,7 @@ export function Modal({ onClose, children, wide }: Props) {
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

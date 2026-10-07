@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { AdminOrder, AdminStats as Stats } from "@/lib/admin-client";
 
@@ -20,7 +20,7 @@ export function AdminStats({ stats, orders }: { stats: Stats; orders: AdminOrder
           <h3 className="mb-2 font-bold text-violet-200">Top convives</h3>
           <ol className="flex flex-col gap-1">
             {stats.topUsers.map((user, index) => (
-              <li key={`${user.name}-${index}`} className="flex justify-between">
+              <li key={`${user.name}-${index}`} className="flex justify-between gap-2">
                 <span>
                   {MEDALS[index] ?? "\u2003"} {user.name}
                 </span>
@@ -80,3 +80,4 @@ export function AdminStats({ stats, orders }: { stats: Stats; orders: AdminOrder
     </section>
   );
 }
+
