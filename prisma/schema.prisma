@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DrinkSource {
+  MANUAL
+  OPEN_FOOD_FACTS
+}
+
+enum WebhookStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  drinks Drink[]
+}
+
+model Drink {
+  id                String      @id @default(uuid())
+  name              String
+  description       String?
+  imageUrl          String?
+  barcode           String?     @unique
+  alcoholPercentage Float?
+  available         Boolean     @default(true)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  source DrinkSource @default(MANUAL)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id String @id @default(uuid())
+
+  userId   String
+  userName String
+
+  // Nullable: the order history survives the deletion of a drink.
+  drinkId   String?
+  drinkName String
+
+  webhookStatus WebhookStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  drink Drink? @relation(fields: [drinkId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}

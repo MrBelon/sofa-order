@@ -1,37 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Drink Order 🥂
 
-## Getting Started
+Petite application web (Next.js + Prisma + PostgreSQL) pour commander une boisson depuis son téléphone pendant une soirée. Chaque commande est enregistrée en base puis transmise à Home Assistant via un webhook, appelé **uniquement côté serveur**.
 
-First, run the development server:
+Cahier des charges : [drink-order-cahier-des-charges.md](./drink-order-cahier-des-charges.md)
+
+## Fonctionnement
+
+- `/` : carte des boissons par catégorie, confirmation, commande (une seule à la fois, cooldown de 30 s par `userId`, contrôlé côté serveur).
+- `/success` : page de confirmation avec message aléatoire.
+- `/orders` : historique personnel (basé sur l'UUID stocké dans `localStorage`).
+- `/admin` : connexion par mot de passe (`ADMIN_PASSWORD`), gestion des boissons, du stock (✓ En stock / ✕ Rupture), des catégories, scan de code-barres (Open Food Facts), statistiques et dernières commandes.
+
+Le webhook reçoit exactement `{ "userName": "...", "drink": "..." }`. Si Home Assistant est injoignable, la commande est quand même enregistrée avec `webhookStatus = FAILED`.
+
+> Note : une boisson supprimée conserve ses commandes (`Order.drinkId` passe à `NULL`, `drinkName` reste), ce qui s'écarte légèrement du schéma du cahier des charges (`drinkId` obligatoire).
+
+## Variables d'environnement
+
+Voir [.env.example](./.env.example).
+
+| Variable | Rôle |
+| --- | --- |
+| `DATABASE_URL` | Connexion PostgreSQL (externe) |
+| `ADMIN_PASSWORD` | Mot de passe de `/admin` (sert aussi à signer le cookie de session) |
+| `HOME_ASSISTANT_WEBHOOK_URL` | URL du webhook, jamais exposée au navigateur |
+| `NEXT_PUBLIC_APP_NAME` | Nom affiché (valeur injectée **au build**) |
+
+## Développement
 
 ```bash
+cp .env.example .env.local   # puis adapter les valeurs
+npm install                  # génère aussi le client Prisma
+npx prisma migrate deploy    # applique les migrations (crée aussi les catégories par défaut)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La caméra (scan de code-barres) nécessite HTTPS, sauf sur `localhost`. Un champ de saisie manuelle du code-barres est disponible en secours.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Docker / Dokploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+docker build --build-arg NEXT_PUBLIC_APP_NAME="Drink Order" -t drink-order .
+docker run -p 3000:3000 \
+  -e DATABASE_URL=... -e ADMIN_PASSWORD=... -e HOME_ASSISTANT_WEBHOOK_URL=... \
+  drink-order
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# sofa-order
+Le conteneur applique les migrations (`prisma migrate deploy`) puis démarre Next.js sur le port 3000. Sur Dokploy : déploiement via le `Dockerfile`, variables d'environnement ci-dessus, et `NEXT_PUBLIC_APP_NAME` en *build argument*. Le cookie admin est `Secure` en production : servir l'application en HTTPS (proxy Dokploy/Traefik).
