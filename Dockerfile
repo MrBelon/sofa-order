@@ -12,7 +12,7 @@ RUN npm ci
 FROM base AS builder
 WORKDIR /app
 # NEXT_PUBLIC_* values are inlined at build time: pass it as a build arg.
-ARG NEXT_PUBLIC_APP_NAME="Drink Order"
+ARG NEXT_PUBLIC_APP_NAME="Sofa Order"
 ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules

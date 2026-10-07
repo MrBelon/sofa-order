@@ -1,4 +1,4 @@
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Drink Order";
+export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Sofa Order";
 
 export const ORDER_COOLDOWN_SECONDS = 30;
 

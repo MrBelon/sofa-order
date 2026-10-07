@@ -1,4 +1,4 @@
-# Drink Order 🥂
+# Sofa Order 🥂
 
 Petite application web (Next.js + Prisma + PostgreSQL) pour commander une boisson depuis son téléphone pendant une soirée. Chaque commande est enregistrée en base puis transmise à Home Assistant via un webhook, appelé **uniquement côté serveur**.
 
@@ -40,7 +40,7 @@ La caméra (scan de code-barres) nécessite HTTPS, sauf sur `localhost`. Un cham
 ## Docker / Dokploy
 
 ```bash
-docker build --build-arg NEXT_PUBLIC_APP_NAME="Drink Order" -t drink-order .
+docker build --build-arg NEXT_PUBLIC_APP_NAME="Sofa Order" -t drink-order .
 docker run -p 3000:3000 \
   -e DATABASE_URL=... -e ADMIN_PASSWORD=... -e HOME_ASSISTANT_WEBHOOK_URL=... \
   drink-order

@@ -34,7 +34,7 @@ export function NameGate() {
           maxLength={40}
           autoFocus
           autoComplete="given-name"
-          placeholder="Robin"
+          placeholder="Joli prénom"
           className="w-full rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-center text-xl outline-none placeholder:text-white/30 focus:border-amber-300"
         />
         <button

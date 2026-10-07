@@ -1,4 +1,4 @@
-# Cahier des charges — Drink Order
+# Cahier des charges — Sofa Order
 
 ## 1. Objectif
 
@@ -65,7 +65,7 @@ ADMIN_PASSWORD="..."
 
 HOME_ASSISTANT_WEBHOOK_URL="https://..."
 
-NEXT_PUBLIC_APP_NAME="Drink Order"
+NEXT_PUBLIC_APP_NAME="Sofa Order"
 ```
 
 Le webhook Home Assistant doit rester strictement côté serveur.
@@ -147,7 +147,7 @@ Exemple :
 
 ```text
 ┌──────────────────────────────┐
-│ 🥂 Drink Order       Robin ⚙ │
+│ 🥂 Sofa Order       Robin ⚙ │
 ├──────────────────────────────┤
 │                              │
 │ 🍺 Bières                    │
